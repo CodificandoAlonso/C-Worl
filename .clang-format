@@ -2,6 +2,7 @@
 Language: C
 BasedOnStyle: LLVM
 
+
 # Indentation
 IndentWidth: 4
 TabWidth: 4
@@ -55,3 +56,8 @@ BreakBeforeTernaryOperators: true
 MaxEmptyLinesToKeep: 1
 ReflowComments: true
 SeparateDefinitionBlocks: Always
+
+
+---
+Language: Cpp
+BasedOnStyle: LLVM

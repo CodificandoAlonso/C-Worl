@@ -18,7 +18,7 @@ SRCS      := $(shell find $(SRC_DIR) -name '*.c')
 OBJS      := $(SRCS:$(SRC_DIR)/%.c=$(BUILD_DIR)/%.o)
 DEPS      := $(OBJS:.o=.d)
 
-TARGET    := main
+TARGET    := build/main
 
 .PHONY: all debug release clean format lint check
 

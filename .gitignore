@@ -4,3 +4,5 @@ build/
 main
 .cache/
 compile_commands.json
+
+.idea

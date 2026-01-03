@@ -12,7 +12,6 @@
 
 #include <stdbool.h>
 #include <stddef.h>
-
 #define DYNARRAY_INITIAL_CAPACITY 16
 #define DYNARRAY_GROWTH_FACTOR    2
 
@@ -29,7 +28,7 @@ typedef struct dynamic_array_t
  * @param arr Pointer to array structure
  * @return true on success, false on allocation failure
  */
-bool dynarray_init(dynamic_array_t *arr);
+dynamic_array_t *dynarray_init(void);
 
 /**
  * @brief Free all memory associated with the array
