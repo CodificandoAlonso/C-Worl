@@ -1,0 +1,131 @@
+---
+# Strict clang-tidy configuration for disciplined C programming
+
+Checks: >
+  -*,
+  bugprone-*,
+  cert-*,
+  clang-analyzer-*,
+  concurrency-*,
+  misc-*,
+  performance-*,
+  portability-*,
+  readability-*,
+  -readability-identifier-length,
+  -misc-no-recursion,
+  -bugprone-easily-swappable-parameters
+
+WarningsAsErrors: '*'
+
+HeaderFilterRegex: '.*'
+
+CheckOptions:
+  # Function length - max 40 lines (your requirement)
+  - key: readability-function-size.LineThreshold
+    value: 40
+  - key: readability-function-size.StatementThreshold
+    value: 30
+  - key: readability-function-size.BranchThreshold
+    value: 8
+  - key: readability-function-size.ParameterThreshold
+    value: 5
+  - key: readability-function-size.NestingThreshold
+    value: 4
+  - key: readability-function-size.VariableThreshold
+    value: 10
+
+  # Cognitive complexity - keeps functions understandable
+  - key: readability-function-cognitive-complexity.Threshold
+    value: 15
+  - key: readability-function-cognitive-complexity.DescribeBasicIncrements
+    value: true
+
+  # Naming conventions (snake_case for C)
+  - key: readability-identifier-naming.FunctionCase
+    value: lower_case
+  - key: readability-identifier-naming.GlobalConstantCase
+    value: UPPER_CASE
+  - key: readability-identifier-naming.GlobalConstantPrefix
+    value: ''
+  - key: readability-identifier-naming.LocalVariableCase
+    value: lower_case
+  - key: readability-identifier-naming.MacroDefinitionCase
+    value: UPPER_CASE
+  - key: readability-identifier-naming.ParameterCase
+    value: lower_case
+  - key: readability-identifier-naming.StructCase
+    value: lower_case
+  - key: readability-identifier-naming.TypedefCase
+    value: lower_case
+  - key: readability-identifier-naming.TypedefSuffix
+    value: '_t'
+  - key: readability-identifier-naming.EnumCase
+    value: lower_case
+  - key: readability-identifier-naming.EnumConstantCase
+    value: UPPER_CASE
+  - key: readability-identifier-naming.GlobalPointerCase
+    value: lower_case
+  - key: readability-identifier-naming.GlobalPointerPrefix
+    value: 'g_'
+  - key: readability-identifier-naming.StaticVariableCase
+    value: lower_case
+  - key: readability-identifier-naming.StaticVariablePrefix
+    value: 's_'
+
+  # Magic numbers - force named constants
+  - key: readability-magic-numbers.IgnoredIntegerValues
+    value: '0;1;2;-1'
+  - key: readability-magic-numbers.IgnoredFloatingPointValues
+    value: '0.0;1.0;0.5'
+
+  # Braces around statements
+  - key: readability-braces-around-statements.ShortStatementLines
+    value: 0
+
+  # Implicit conversions
+  - key: readability-implicit-bool-conversion.AllowIntegerConditions
+    value: false
+  - key: readability-implicit-bool-conversion.AllowPointerConditions
+    value: true
+
+  # Else after return
+  - key: readability-else-after-return.WarnOnConditionVariables
+    value: true
+
+  # Simplify boolean expressions
+  - key: readability-simplify-boolean-expr.ChainedConditionalReturn
+    value: true
+  - key: readability-simplify-boolean-expr.ChainedConditionalAssignment
+    value: true
+
+  # CERT specific
+  - key: cert-dcl16-c.NewSuffixes
+    value: 'L;LL;LU;LLU'
+  - key: cert-str34-c.DiagnoseSignedUnsignedCharComparisons
+    value: true
+
+  # Miscellaneous
+  - key: misc-throw-by-value-catch-by-reference.CheckThrowTemporaries
+    value: true
+  - key: misc-definitions-in-headers.HeaderFileExtensions
+    value: ';h;hh;hpp;hxx'
+  - key: misc-definitions-in-headers.UseHeaderFileExtension
+    value: true
+
+  # Performance
+  - key: performance-unnecessary-value-param.AllowedTypes
+    value: ''
+
+  # Bug prone
+  - key: bugprone-argument-comment.StrictMode
+    value: true
+  - key: bugprone-assert-side-effect.AssertMacros
+    value: 'assert;ASSERT'
+  - key: bugprone-misplaced-widening-cast.CheckImplicitCasts
+    value: true
+  - key: bugprone-sizeof-expression.WarnOnSizeOfConstant
+    value: true
+  - key: bugprone-sizeof-expression.WarnOnSizeOfIntegerExpression
+    value: true
+  - key: bugprone-suspicious-string-compare.WarnOnLogicalNotComparison
+    value: true
