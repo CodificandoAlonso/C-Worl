@@ -1,5 +1,5 @@
 ---
-Language: C
+Language: Cpp
 BasedOnStyle: LLVM
 
 
@@ -56,8 +56,3 @@ BreakBeforeTernaryOperators: true
 MaxEmptyLinesToKeep: 1
 ReflowComments: true
 SeparateDefinitionBlocks: Always
-
-
----
-Language: Cpp
-BasedOnStyle: LLVM

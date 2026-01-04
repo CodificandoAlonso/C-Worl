@@ -15,12 +15,11 @@
 #define DYNARRAY_INITIAL_CAPACITY 16
 #define DYNARRAY_GROWTH_FACTOR    2
 
-
 typedef struct dynamic_array_t
 {
-    void   **data;
-    size_t   size;
-    size_t   capacity;
+    void **data;
+    size_t size;
+    size_t capacity;
 } dynamic_array_t;
 
 /**
