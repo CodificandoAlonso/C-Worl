@@ -129,17 +129,55 @@ void *pop_tail(linked_list_t *list)
 
 bool insert_node(linked_list_t *list, size_t index, void *data){
 
+    if (index > list->len)
+    {
+        throw_error("Too much index size for the ll");
+    }
+
+    if (index == 0)
+    {
+
+    }
+
+
+
 }
 
 bool remove_node(linked_list_t *list, size_t index){
 
-}
 
-size_t get_linked_list_size(linked_list_t *list){
 
 }
+
+size_t get_linked_list_size(const linked_list_t *list){
+    return list->len;
+}
+
 
 void *get_element(linked_list_t *list, size_t index){
 
+    if (list->len == 0)
+    {
+        throw_error("empty list");
+    }
+    if (index > list->len -1)
+    {
+        throw_error("No index in list");
+    }
+    if (index == 0)
+    {
+        return list->head->value;
+    }
+    return _get_element(list->head, index - (size_t)ONE);
+}
 
+
+
+void *_get_element(node_t *actual, size_t index)
+{
+    if (index == 0)
+    {
+        return actual->value;
+    }
+    return _get_element((node_t *)actual->next, index - (size_t)ONE);
 }
