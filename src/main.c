@@ -1,17 +1,34 @@
 /**
  * @file main.c
- * @brief Tests for dynamic_array implementation
+ * @brief Tests for dynamic_array and linked_list implementations
  */
 
 #include "dynamic_array.h"
+#include "linked_list.h"
 
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
 
-static void test_init_and_destroy(void)
+/* ============================================
+ *          HELPER FUNCTIONS
+ * ============================================ */
+
+static int *make_int(int value)
 {
-    printf("Test: init and destroy... ");
+    int *ptr = malloc(sizeof(int));
+    assert(ptr != NULL);
+    *ptr = value;
+    return ptr;
+}
+
+/* ============================================
+ *          DYNAMIC ARRAY TESTS
+ * ============================================ */
+
+static void test_da_init_and_destroy(void)
+{
+    printf("Test: DA init and destroy... ");
     dynamic_array_t *arr = dynarray_init();
     assert(arr != NULL);
     assert(dynarray_size(arr) == 0);
@@ -20,9 +37,9 @@ static void test_init_and_destroy(void)
     printf("PASSED\n");
 }
 
-static void test_push_and_get(void)
+static void test_da_push_and_get(void)
 {
-    printf("Test: push and get... ");
+    printf("Test: DA push and get... ");
     dynamic_array_t *arr = dynarray_init();
 
     int a = 10;
@@ -42,9 +59,9 @@ static void test_push_and_get(void)
     printf("PASSED\n");
 }
 
-static void test_push_single(void)
+static void test_da_push_single(void)
 {
-    printf("Test: push single element... ");
+    printf("Test: DA push single element... ");
     dynamic_array_t *arr = dynarray_init();
 
     int  x      = 42;
@@ -58,9 +75,9 @@ static void test_push_single(void)
     printf("PASSED\n");
 }
 
-static void test_pop(void)
+static void test_da_pop(void)
 {
-    printf("Test: pop... ");
+    printf("Test: DA pop... ");
     dynamic_array_t *arr = dynarray_init();
 
     int a = 100;
@@ -81,9 +98,9 @@ static void test_pop(void)
     printf("PASSED\n");
 }
 
-static void test_pop_empty(void)
+static void test_da_pop_empty(void)
 {
-    printf("Test: pop from empty... ");
+    printf("Test: DA pop from empty... ");
     dynamic_array_t *arr = dynarray_init();
 
     void *result = dynarray_pop(arr);
@@ -95,9 +112,9 @@ static void test_pop_empty(void)
     printf("PASSED\n");
 }
 
-static void test_pop_until_empty(void)
+static void test_da_pop_until_empty(void)
 {
-    printf("Test: pop until empty... ");
+    printf("Test: DA pop until empty... ");
     dynamic_array_t *arr = dynarray_init();
 
     int a = 1;
@@ -122,9 +139,9 @@ static void test_pop_until_empty(void)
     printf("PASSED\n");
 }
 
-static void test_growth(void)
+static void test_da_growth(void)
 {
-    printf("Test: growth beyond initial capacity... ");
+    printf("Test: DA growth beyond initial capacity... ");
     dynamic_array_t *arr = dynarray_init();
 
     int values[50];
@@ -152,9 +169,9 @@ static void test_growth(void)
     printf("PASSED\n");
 }
 
-static void test_growth_large(void)
+static void test_da_growth_large(void)
 {
-    printf("Test: growth to 1000 elements... ");
+    printf("Test: DA growth to 1000 elements... ");
     dynamic_array_t *arr = dynarray_init();
 
     int *values = malloc(1000 * sizeof(int));
@@ -180,9 +197,9 @@ static void test_growth_large(void)
     printf("PASSED\n");
 }
 
-static void test_set_replace(void)
+static void test_da_set_replace(void)
 {
-    printf("Test: set replaces existing element... ");
+    printf("Test: DA set replaces existing element... ");
     dynamic_array_t *arr = dynarray_init();
 
     int a           = 1;
@@ -205,9 +222,9 @@ static void test_set_replace(void)
     printf("PASSED\n");
 }
 
-static void test_set_first(void)
+static void test_da_set_first(void)
 {
-    printf("Test: set first element... ");
+    printf("Test: DA set first element... ");
     dynamic_array_t *arr = dynarray_init();
 
     int a           = 10;
@@ -227,9 +244,9 @@ static void test_set_first(void)
     printf("PASSED\n");
 }
 
-static void test_set_last(void)
+static void test_da_set_last(void)
 {
-    printf("Test: set last element... ");
+    printf("Test: DA set last element... ");
     dynamic_array_t *arr = dynarray_init();
 
     int a           = 10;
@@ -250,9 +267,9 @@ static void test_set_last(void)
     printf("PASSED\n");
 }
 
-static void test_set_append(void)
+static void test_da_set_append(void)
 {
-    printf("Test: set at size appends... ");
+    printf("Test: DA set at size appends... ");
     dynamic_array_t *arr = dynarray_init();
 
     int a           = 10;
@@ -272,9 +289,9 @@ static void test_set_append(void)
     printf("PASSED\n");
 }
 
-static void test_get_empty(void)
+static void test_da_get_empty(void)
 {
-    printf("Test: get from empty array... ");
+    printf("Test: DA get from empty array... ");
     dynamic_array_t *arr = dynarray_init();
 
     void *result = dynarray_get(arr, 0);
@@ -285,9 +302,9 @@ static void test_get_empty(void)
     printf("PASSED\n");
 }
 
-static void test_get_boundaries(void)
+static void test_da_get_boundaries(void)
 {
-    printf("Test: get at boundaries... ");
+    printf("Test: DA get at boundaries... ");
     dynamic_array_t *arr = dynarray_init();
 
     int a = 100;
@@ -311,9 +328,9 @@ static void test_get_boundaries(void)
     printf("PASSED\n");
 }
 
-static void test_is_empty(void)
+static void test_da_is_empty(void)
 {
-    printf("Test: is_empty... ");
+    printf("Test: DA is_empty... ");
     dynamic_array_t *arr = dynarray_init();
 
     assert(dynarray_is_empty(arr) == true);
@@ -329,9 +346,9 @@ static void test_is_empty(void)
     printf("PASSED\n");
 }
 
-static void test_size_tracking(void)
+static void test_da_size_tracking(void)
 {
-    printf("Test: size tracking... ");
+    printf("Test: DA size tracking... ");
     dynamic_array_t *arr = dynarray_init();
 
     assert(dynarray_size(arr) == 0);
@@ -354,9 +371,9 @@ static void test_size_tracking(void)
     printf("PASSED\n");
 }
 
-static void test_mixed_types(void)
+static void test_da_mixed_types(void)
 {
-    printf("Test: mixed pointer types... ");
+    printf("Test: DA mixed pointer types... ");
     dynamic_array_t *arr = dynarray_init();
 
     int    integer   = 42;
@@ -378,9 +395,9 @@ static void test_mixed_types(void)
     printf("PASSED\n");
 }
 
-static void test_null_elements(void)
+static void test_da_null_elements(void)
 {
-    printf("Test: storing NULL pointers... ");
+    printf("Test: DA storing NULL pointers... ");
     dynamic_array_t *arr = dynarray_init();
 
     int a = 10;
@@ -398,9 +415,9 @@ static void test_null_elements(void)
     printf("PASSED\n");
 }
 
-static void test_lifo_order(void)
+static void test_da_lifo_order(void)
 {
-    printf("Test: LIFO order (stack behavior)... ");
+    printf("Test: DA LIFO order (stack behavior)... ");
     dynamic_array_t *arr = dynarray_init();
 
     int a = 1;
@@ -422,9 +439,9 @@ static void test_lifo_order(void)
     printf("PASSED\n");
 }
 
-static void test_push_pop_interleaved(void)
+static void test_da_push_pop_interleaved(void)
 {
-    printf("Test: interleaved push and pop... ");
+    printf("Test: DA interleaved push and pop... ");
     dynamic_array_t *arr = dynarray_init();
 
     int a = 1;
@@ -444,31 +461,659 @@ static void test_push_pop_interleaved(void)
     printf("PASSED\n");
 }
 
+/* ============================================
+ *          LINKED LIST TESTS
+ * ============================================ */
+
+static void test_ll_init_and_delete(void)
+{
+    printf("Test: LL init and delete... ");
+    linked_list_t *list = init_linkedlist();
+    assert(list != NULL);
+    assert(get_linked_list_size(list) == 0);
+    delete_linkedlist(list);
+    printf("PASSED\n");
+}
+
+static void test_ll_delete_null(void)
+{
+    printf("Test: LL delete NULL list... ");
+    delete_linkedlist(NULL);
+    printf("PASSED\n");
+}
+
+static void test_ll_push_single(void)
+{
+    printf("Test: LL push single element... ");
+    linked_list_t *list = init_linkedlist();
+
+    push_node(list, make_int(42));
+
+    assert(get_linked_list_size(list) == 1);
+    assert(*(int *) get_element(list, 0) == 42);
+
+    delete_linkedlist(list);
+    printf("PASSED\n");
+}
+
+static void test_ll_push_multiple(void)
+{
+    printf("Test: LL push multiple elements... ");
+    linked_list_t *list = init_linkedlist();
+
+    push_node(list, make_int(10));
+    push_node(list, make_int(20));
+    push_node(list, make_int(30));
+
+    assert(get_linked_list_size(list) == 3);
+    assert(*(int *) get_element(list, 0) == 10);
+    assert(*(int *) get_element(list, 1) == 20);
+    assert(*(int *) get_element(list, 2) == 30);
+
+    delete_linkedlist(list);
+    printf("PASSED\n");
+}
+
+static void test_ll_pop_head_single(void)
+{
+    printf("Test: LL pop head from single element list... ");
+    linked_list_t *list = init_linkedlist();
+
+    push_node(list, make_int(99));
+
+    int *popped = (int *) pop_head(list);
+    assert(*popped == 99);
+    assert(get_linked_list_size(list) == 0);
+
+    free(popped);
+    delete_linkedlist(list);
+    printf("PASSED\n");
+}
+
+static void test_ll_pop_head_multiple(void)
+{
+    printf("Test: LL pop head from multiple elements... ");
+    linked_list_t *list = init_linkedlist();
+
+    push_node(list, make_int(1));
+    push_node(list, make_int(2));
+    push_node(list, make_int(3));
+
+    int *popped = (int *) pop_head(list);
+    assert(*popped == 1);
+    assert(get_linked_list_size(list) == 2);
+    assert(*(int *) get_element(list, 0) == 2);
+
+    free(popped);
+    delete_linkedlist(list);
+    printf("PASSED\n");
+}
+
+static void test_ll_pop_tail_single(void)
+{
+    printf("Test: LL pop tail from single element list... ");
+    linked_list_t *list = init_linkedlist();
+
+    push_node(list, make_int(77));
+
+    int *popped = (int *) pop_tail(list);
+    assert(*popped == 77);
+    assert(get_linked_list_size(list) == 0);
+
+    free(popped);
+    delete_linkedlist(list);
+    printf("PASSED\n");
+}
+
+static void test_ll_pop_tail_multiple(void)
+{
+    printf("Test: LL pop tail from multiple elements... ");
+    linked_list_t *list = init_linkedlist();
+
+    push_node(list, make_int(1));
+    push_node(list, make_int(2));
+    push_node(list, make_int(3));
+
+    int *popped = (int *) pop_tail(list);
+    assert(*popped == 3);
+    assert(get_linked_list_size(list) == 2);
+    assert(*(int *) get_element(list, 1) == 2);
+
+    free(popped);
+    delete_linkedlist(list);
+    printf("PASSED\n");
+}
+
+static void test_ll_pop_all_head(void)
+{
+    printf("Test: LL pop all elements from head... ");
+    linked_list_t *list = init_linkedlist();
+
+    push_node(list, make_int(1));
+    push_node(list, make_int(2));
+    push_node(list, make_int(3));
+
+    int *p1 = (int *) pop_head(list);
+    int *p2 = (int *) pop_head(list);
+    int *p3 = (int *) pop_head(list);
+
+    assert(*p1 == 1);
+    assert(*p2 == 2);
+    assert(*p3 == 3);
+    assert(get_linked_list_size(list) == 0);
+
+    free(p1);
+    free(p2);
+    free(p3);
+    delete_linkedlist(list);
+    printf("PASSED\n");
+}
+
+static void test_ll_pop_all_tail(void)
+{
+    printf("Test: LL pop all elements from tail... ");
+    linked_list_t *list = init_linkedlist();
+
+    push_node(list, make_int(1));
+    push_node(list, make_int(2));
+    push_node(list, make_int(3));
+
+    int *p1 = (int *) pop_tail(list);
+    int *p2 = (int *) pop_tail(list);
+    int *p3 = (int *) pop_tail(list);
+
+    assert(*p1 == 3);
+    assert(*p2 == 2);
+    assert(*p3 == 1);
+    assert(get_linked_list_size(list) == 0);
+
+    free(p1);
+    free(p2);
+    free(p3);
+    delete_linkedlist(list);
+    printf("PASSED\n");
+}
+
+static void test_ll_insert_empty_list(void)
+{
+    printf("Test: LL insert into empty list at index 0... ");
+    linked_list_t *list = init_linkedlist();
+
+    insert_node(list, 0, make_int(100));
+
+    assert(get_linked_list_size(list) == 1);
+    assert(*(int *) get_element(list, 0) == 100);
+
+    delete_linkedlist(list);
+    printf("PASSED\n");
+}
+
+static void test_ll_insert_at_head(void)
+{
+    printf("Test: LL insert at head (index 0)... ");
+    linked_list_t *list = init_linkedlist();
+
+    push_node(list, make_int(1));
+    push_node(list, make_int(2));
+    insert_node(list, 0, make_int(99));
+
+    assert(get_linked_list_size(list) == 3);
+    assert(*(int *) get_element(list, 0) == 99);
+    assert(*(int *) get_element(list, 1) == 1);
+    assert(*(int *) get_element(list, 2) == 2);
+
+    delete_linkedlist(list);
+    printf("PASSED\n");
+}
+
+static void test_ll_insert_at_tail(void)
+{
+    printf("Test: LL insert at tail... ");
+    linked_list_t *list = init_linkedlist();
+
+    push_node(list, make_int(1));
+    push_node(list, make_int(2));
+    insert_node(list, 2, make_int(99));
+
+    assert(get_linked_list_size(list) == 3);
+    assert(*(int *) get_element(list, 0) == 1);
+    assert(*(int *) get_element(list, 1) == 2);
+    assert(*(int *) get_element(list, 2) == 99);
+
+    delete_linkedlist(list);
+    printf("PASSED\n");
+}
+
+static void test_ll_insert_middle(void)
+{
+    printf("Test: LL insert in middle... ");
+    linked_list_t *list = init_linkedlist();
+
+    push_node(list, make_int(1));
+    push_node(list, make_int(3));
+    insert_node(list, 1, make_int(2));
+
+    assert(get_linked_list_size(list) == 3);
+    assert(*(int *) get_element(list, 0) == 1);
+    assert(*(int *) get_element(list, 1) == 2);
+    assert(*(int *) get_element(list, 2) == 3);
+
+    delete_linkedlist(list);
+    printf("PASSED\n");
+}
+
+static void test_ll_insert_multiple_middle(void)
+{
+    printf("Test: LL multiple inserts in middle... ");
+    linked_list_t *list = init_linkedlist();
+
+    push_node(list, make_int(1));
+    push_node(list, make_int(5));
+    insert_node(list, 1, make_int(2));
+    insert_node(list, 2, make_int(3));
+    insert_node(list, 3, make_int(4));
+
+    assert(get_linked_list_size(list) == 5);
+    assert(*(int *) get_element(list, 0) == 1);
+    assert(*(int *) get_element(list, 1) == 2);
+    assert(*(int *) get_element(list, 2) == 3);
+    assert(*(int *) get_element(list, 3) == 4);
+    assert(*(int *) get_element(list, 4) == 5);
+
+    delete_linkedlist(list);
+    printf("PASSED\n");
+}
+
+static void test_ll_remove_head(void)
+{
+    printf("Test: LL remove head... ");
+    linked_list_t *list = init_linkedlist();
+
+    push_node(list, make_int(1));
+    push_node(list, make_int(2));
+    push_node(list, make_int(3));
+
+    remove_node(list, 0);
+
+    assert(get_linked_list_size(list) == 2);
+    assert(*(int *) get_element(list, 0) == 2);
+    assert(*(int *) get_element(list, 1) == 3);
+
+    delete_linkedlist(list);
+    printf("PASSED\n");
+}
+
+static void test_ll_remove_tail(void)
+{
+    printf("Test: LL remove tail... ");
+    linked_list_t *list = init_linkedlist();
+
+    push_node(list, make_int(1));
+    push_node(list, make_int(2));
+    push_node(list, make_int(3));
+
+    remove_node(list, 2);
+
+    assert(get_linked_list_size(list) == 2);
+    assert(*(int *) get_element(list, 0) == 1);
+    assert(*(int *) get_element(list, 1) == 2);
+
+    delete_linkedlist(list);
+    printf("PASSED\n");
+}
+
+static void test_ll_remove_middle(void)
+{
+    printf("Test: LL remove middle... ");
+    linked_list_t *list = init_linkedlist();
+
+    push_node(list, make_int(1));
+    push_node(list, make_int(2));
+    push_node(list, make_int(3));
+
+    remove_node(list, 1);
+
+    assert(get_linked_list_size(list) == 2);
+    assert(*(int *) get_element(list, 0) == 1);
+    assert(*(int *) get_element(list, 1) == 3);
+
+    delete_linkedlist(list);
+    printf("PASSED\n");
+}
+
+static void test_ll_remove_single(void)
+{
+    printf("Test: LL remove single element... ");
+    linked_list_t *list = init_linkedlist();
+
+    push_node(list, make_int(42));
+
+    remove_node(list, 0);
+
+    assert(get_linked_list_size(list) == 0);
+
+    delete_linkedlist(list);
+    printf("PASSED\n");
+}
+
+static void test_ll_remove_all(void)
+{
+    printf("Test: LL remove all elements... ");
+    linked_list_t *list = init_linkedlist();
+
+    push_node(list, make_int(1));
+    push_node(list, make_int(2));
+    push_node(list, make_int(3));
+
+    remove_node(list, 1);
+    remove_node(list, 1);
+    remove_node(list, 0);
+
+    assert(get_linked_list_size(list) == 0);
+
+    delete_linkedlist(list);
+    printf("PASSED\n");
+}
+
+static void test_ll_get_element_head(void)
+{
+    printf("Test: LL get element at head... ");
+    linked_list_t *list = init_linkedlist();
+
+    push_node(list, make_int(111));
+    push_node(list, make_int(222));
+
+    assert(*(int *) get_element(list, 0) == 111);
+
+    delete_linkedlist(list);
+    printf("PASSED\n");
+}
+
+static void test_ll_get_element_tail(void)
+{
+    printf("Test: LL get element at tail... ");
+    linked_list_t *list = init_linkedlist();
+
+    push_node(list, make_int(111));
+    push_node(list, make_int(222));
+    push_node(list, make_int(333));
+
+    assert(*(int *) get_element(list, 2) == 333);
+
+    delete_linkedlist(list);
+    printf("PASSED\n");
+}
+
+static void test_ll_get_element_middle(void)
+{
+    printf("Test: LL get element in middle... ");
+    linked_list_t *list = init_linkedlist();
+
+    push_node(list, make_int(10));
+    push_node(list, make_int(20));
+    push_node(list, make_int(30));
+    push_node(list, make_int(40));
+    push_node(list, make_int(50));
+
+    assert(*(int *) get_element(list, 2) == 30);
+
+    delete_linkedlist(list);
+    printf("PASSED\n");
+}
+
+static void test_ll_size_tracking(void)
+{
+    printf("Test: LL size tracking through operations... ");
+    linked_list_t *list = init_linkedlist();
+
+    assert(get_linked_list_size(list) == 0);
+
+    push_node(list, make_int(1));
+    assert(get_linked_list_size(list) == 1);
+
+    push_node(list, make_int(2));
+    assert(get_linked_list_size(list) == 2);
+
+    push_node(list, make_int(3));
+    assert(get_linked_list_size(list) == 3);
+
+    int *p = (int *) pop_head(list);
+    free(p);
+    assert(get_linked_list_size(list) == 2);
+
+    p = (int *) pop_tail(list);
+    free(p);
+    assert(get_linked_list_size(list) == 1);
+
+    delete_linkedlist(list);
+    printf("PASSED\n");
+}
+
+static void test_ll_mixed_operations(void)
+{
+    printf("Test: LL mixed push/pop operations... ");
+    linked_list_t *list = init_linkedlist();
+
+    push_node(list, make_int(1));
+    push_node(list, make_int(2));
+
+    int *p = (int *) pop_head(list);
+    free(p);
+
+    push_node(list, make_int(3));
+    push_node(list, make_int(4));
+
+    p = (int *) pop_tail(list);
+    free(p);
+
+    assert(get_linked_list_size(list) == 2);
+    assert(*(int *) get_element(list, 0) == 2);
+    assert(*(int *) get_element(list, 1) == 3);
+
+    delete_linkedlist(list);
+    printf("PASSED\n");
+}
+
+static void test_ll_doubly_linked_traversal(void)
+{
+    printf("Test: LL doubly linked structure integrity... ");
+    linked_list_t *list = init_linkedlist();
+
+    push_node(list, make_int(1));
+    push_node(list, make_int(2));
+    push_node(list, make_int(3));
+
+    int *p1 = (int *) pop_head(list);
+    int *p2 = (int *) pop_tail(list);
+    int *p3 = (int *) pop_head(list);
+
+    assert(*p1 == 1);
+    assert(*p2 == 3);
+    assert(*p3 == 2);
+    assert(get_linked_list_size(list) == 0);
+
+    free(p1);
+    free(p2);
+    free(p3);
+    delete_linkedlist(list);
+    printf("PASSED\n");
+}
+
+static void test_ll_large_list(void)
+{
+    printf("Test: LL large list (100 elements)... ");
+    linked_list_t *list = init_linkedlist();
+
+    for (int i = 0; i < 100; i++)
+    {
+        push_node(list, make_int(i * 10));
+    }
+
+    assert(get_linked_list_size(list) == 100);
+
+    for (int i = 0; i < 100; i++)
+    {
+        assert(*(int *) get_element(list, (size_t) i) == i * 10);
+    }
+
+    delete_linkedlist(list);
+    printf("PASSED\n");
+}
+
+static void test_ll_insert_preserves_links(void)
+{
+    printf("Test: LL insert preserves prev/next links... ");
+    linked_list_t *list = init_linkedlist();
+
+    push_node(list, make_int(1));
+    push_node(list, make_int(4));
+    insert_node(list, 1, make_int(2));
+    insert_node(list, 2, make_int(3));
+
+    assert(*(int *) get_element(list, 0) == 1);
+    assert(*(int *) get_element(list, 1) == 2);
+    assert(*(int *) get_element(list, 2) == 3);
+    assert(*(int *) get_element(list, 3) == 4);
+
+    int *p1 = (int *) pop_tail(list);
+    int *p2 = (int *) pop_tail(list);
+    int *p3 = (int *) pop_tail(list);
+    int *p4 = (int *) pop_tail(list);
+
+    assert(*p1 == 4);
+    assert(*p2 == 3);
+    assert(*p3 == 2);
+    assert(*p4 == 1);
+
+    free(p1);
+    free(p2);
+    free(p3);
+    free(p4);
+    delete_linkedlist(list);
+    printf("PASSED\n");
+}
+
+static void test_ll_remove_preserves_links(void)
+{
+    printf("Test: LL remove preserves prev/next links... ");
+    linked_list_t *list = init_linkedlist();
+
+    push_node(list, make_int(1));
+    push_node(list, make_int(2));
+    push_node(list, make_int(3));
+    push_node(list, make_int(4));
+    push_node(list, make_int(5));
+
+    remove_node(list, 2);
+
+    assert(get_linked_list_size(list) == 4);
+    assert(*(int *) get_element(list, 0) == 1);
+    assert(*(int *) get_element(list, 1) == 2);
+    assert(*(int *) get_element(list, 2) == 4);
+    assert(*(int *) get_element(list, 3) == 5);
+
+    int *p1 = (int *) pop_tail(list);
+    int *p2 = (int *) pop_tail(list);
+
+    assert(*p1 == 5);
+    assert(*p2 == 4);
+
+    free(p1);
+    free(p2);
+    delete_linkedlist(list);
+    printf("PASSED\n");
+}
+
+static void test_ll_insert_then_remove(void)
+{
+    printf("Test: LL insert then remove... ");
+    linked_list_t *list = init_linkedlist();
+
+    push_node(list, make_int(1));
+    push_node(list, make_int(3));
+    insert_node(list, 1, make_int(2));
+
+    assert(get_linked_list_size(list) == 3);
+
+    remove_node(list, 1);
+
+    assert(get_linked_list_size(list) == 2);
+    assert(*(int *) get_element(list, 0) == 1);
+    assert(*(int *) get_element(list, 1) == 3);
+
+    delete_linkedlist(list);
+    printf("PASSED\n");
+}
+
+/* ============================================
+ *               MAIN
+ * ============================================ */
+
 int main(void)
 {
-    printf("\n=== Dynamic Array Tests ===\n\n");
+    printf("\n========================================\n");
+    printf("         DYNAMIC ARRAY TESTS\n");
+    printf("========================================\n\n");
 
-    test_init_and_destroy();
-    test_push_single();
-    test_push_and_get();
-    test_pop();
-    test_pop_empty();
-    test_pop_until_empty();
-    test_is_empty();
-    test_size_tracking();
-    test_growth();
-    test_growth_large();
-    test_get_empty();
-    test_get_boundaries();
-    test_set_replace();
-    test_set_first();
-    test_set_last();
-    test_set_append();
-    test_mixed_types();
-    test_null_elements();
-    test_lifo_order();
-    test_push_pop_interleaved();
+    test_da_init_and_destroy();
+    test_da_push_single();
+    test_da_push_and_get();
+    test_da_pop();
+    test_da_pop_empty();
+    test_da_pop_until_empty();
+    test_da_is_empty();
+    test_da_size_tracking();
+    test_da_growth();
+    test_da_growth_large();
+    test_da_get_empty();
+    test_da_get_boundaries();
+    test_da_set_replace();
+    test_da_set_first();
+    test_da_set_last();
+    test_da_set_append();
+    test_da_mixed_types();
+    test_da_null_elements();
+    test_da_lifo_order();
+    test_da_push_pop_interleaved();
 
-    printf("\n=== All %d tests completed ===\n\n", 20);
+    printf("\n========================================\n");
+    printf("          LINKED LIST TESTS\n");
+    printf("========================================\n\n");
+
+    test_ll_init_and_delete();
+    test_ll_delete_null();
+    test_ll_push_single();
+    test_ll_push_multiple();
+    test_ll_pop_head_single();
+    test_ll_pop_head_multiple();
+    test_ll_pop_tail_single();
+    test_ll_pop_tail_multiple();
+    test_ll_pop_all_head();
+    test_ll_pop_all_tail();
+    test_ll_insert_empty_list();
+    test_ll_insert_at_head();
+    test_ll_insert_at_tail();
+    test_ll_insert_middle();
+    test_ll_insert_multiple_middle();
+    test_ll_remove_head();
+    test_ll_remove_tail();
+    test_ll_remove_middle();
+    test_ll_remove_single();
+    test_ll_remove_all();
+    test_ll_get_element_head();
+    test_ll_get_element_tail();
+    test_ll_get_element_middle();
+    test_ll_size_tracking();
+    test_ll_mixed_operations();
+    test_ll_doubly_linked_traversal();
+    test_ll_large_list();
+    test_ll_insert_preserves_links();
+    test_ll_remove_preserves_links();
+    test_ll_insert_then_remove();
+
+    printf("\n========================================\n");
+    printf("    All 50 tests completed\n");
+    printf("========================================\n\n");
+
     return EXIT_SUCCESS;
 }

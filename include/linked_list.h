@@ -37,14 +37,14 @@ void *pop_head(linked_list_t *list);
 
 void *pop_tail(linked_list_t *list);
 
-bool insert_node(linked_list_t *list, size_t index, void *data);
+void insert_node(linked_list_t *list, size_t index, void *data);
 
-bool remove_node(linked_list_t *list, size_t index);
+void remove_node(linked_list_t *list, size_t index);
 
 size_t get_linked_list_size(const linked_list_t *list);
 
 void *get_element(linked_list_t *list, size_t index);
 
-void *_get_element(node_t *actual, size_t index);
+void *rec_get_element(node_t *actual, size_t index);
 
 #endif // C_WORL_LINKED_LIST_H

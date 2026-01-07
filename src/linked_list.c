@@ -7,10 +7,7 @@
 #include "dynamic_array.h"
 #include "utils.h"
 
-#include <stdbool.h>
-#include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h>
 
 linked_list_t *init_linkedlist(void)
 {
@@ -44,9 +41,11 @@ void delete_linkedlist(linked_list_t *list)
     while (base->prev != NULL)
     {
         node_t *new_base = base->prev;
+        free(base->value);
         free(base);
         base = new_base;
     }
+    free(base->value);
     free(base);
     free(list);
 }
@@ -64,7 +63,7 @@ node_t *create_node(void *data)
 void push_node(linked_list_t *list, void *data)
 {
     node_t *new_node = create_node(data);
-    if (list->len == 0)
+    if (list->len == (size_t) ZERO)
     {
         list->head = new_node;
         list->tail = new_node;
@@ -79,7 +78,7 @@ void push_node(linked_list_t *list, void *data)
 
 void *pop_head(linked_list_t *list)
 {
-    if (list->len == 0)
+    if (list->len == (size_t) ZERO)
     {
         throw_error("No elements in linked list");
     }
@@ -103,12 +102,12 @@ void *pop_head(linked_list_t *list)
 
 void *pop_tail(linked_list_t *list)
 {
-    if (list->len == 0)
+    if (list->len == (size_t) ZERO)
     {
         throw_error("No elements in linked list");
     }
     node_t *return_node = list->tail;
-    if (list->len == 1)
+    if (list->len == (size_t) ONE)
     {
         list->head = NULL;
         list->tail = NULL;
@@ -125,42 +124,117 @@ void *pop_tail(linked_list_t *list)
     return return_value;
 }
 
+void insert_node(linked_list_t *list, size_t index, void *data)
+{
 
-
-bool insert_node(linked_list_t *list, size_t index, void *data){
-
-    if (index > list->len)
+    if (index > list->len || (index > 0 && list->len == 0))
     {
         throw_error("Too much index size for the ll");
     }
 
-    if (index == 0)
-    {
+    node_t *node_to_insert = create_node(data);
 
+    // Case ll empty and insert in index 0(ALLOWED)
+    if (list->len == 0 && index == 0)
+    {
+        list->head = node_to_insert;
+        list->tail = node_to_insert;
+        list->len++;
+        return;
     }
 
+    // Case push to head.
+    if (index == 0)
+    {
+        list->head->prev     = node_to_insert;
+        node_to_insert->next = list->head;
+        list->head           = node_to_insert;
+        list->len++;
+        return;
+    }
 
+    // Case push to tail
+    if (index == list->len)
+    {
+        node_to_insert->prev = list->tail;
+        list->tail->next     = node_to_insert;
+        list->tail           = node_to_insert;
+        list->len++;
+        return;
+    }
 
+    node_t *iter_node = list->head;
+    node_t *next_node = list->head->next;
+    // general case. Navigate till the element and insert it
+    for (size_t i = 1; i < index; i++)
+    {
+        iter_node = iter_node->next;
+        next_node = iter_node->next;
+    }
+
+    node_to_insert->next = iter_node->next;
+    node_to_insert->prev = iter_node;
+    next_node->prev      = node_to_insert;
+    iter_node->next      = node_to_insert;
+    list->len++;
 }
 
-bool remove_node(linked_list_t *list, size_t index){
+void remove_node(linked_list_t *list, size_t index)
+{
 
+    if (list->len == 0)
+    {
+        throw_error("EMPTY LL");
+    }
 
+    // Check boundaries
+    if (index > list->len - (size_t) ONE)
+    {
+        throw_error("INDEX OUT OF BOUNDARIES");
+    }
 
+    if (index == 0)
+    {
+        // As pop head return a pointer to the data, we save and free it
+        void *data = pop_head(list);
+        free(data);
+        return;
+    }
+    if (index == list->len - (size_t) ONE)
+    {
+        // Same as pop_head, but with the tail
+        void *data = pop_tail(list);
+        free(data);
+        return;
+    }
+
+    // General case. Navigate till the index of the element
+    node_t *index_node = list->head;
+
+    for (size_t i = 0; i < index; i++)
+    {
+        index_node = index_node->next;
+    }
+    ((node_t *) index_node->prev)->next = index_node->next;
+    ((node_t *) index_node->next)->prev = index_node->prev;
+    free(index_node->value);
+    free(index_node);
+    list->len--;
 }
 
-size_t get_linked_list_size(const linked_list_t *list){
+size_t get_linked_list_size(const linked_list_t *list)
+{
     return list->len;
 }
 
-
-void *get_element(linked_list_t *list, size_t index){
+void *get_element(linked_list_t *list, size_t index)
+{
 
     if (list->len == 0)
     {
         throw_error("empty list");
     }
-    if (index > list->len -1)
+    if (index > list->len - 1)
     {
         throw_error("No index in list");
     }
@@ -168,16 +242,14 @@ void *get_element(linked_list_t *list, size_t index){
     {
         return list->head->value;
     }
-    return _get_element(list->head, index - (size_t)ONE);
+    return rec_get_element(list->head->next, index - (size_t) ONE);
 }
 
-
-
-void *_get_element(node_t *actual, size_t index)
+void *rec_get_element(node_t *actual, size_t index)
 {
     if (index == 0)
     {
         return actual->value;
     }
-    return _get_element((node_t *)actual->next, index - (size_t)ONE);
+    return rec_get_element((node_t *) actual->next, index - (size_t) ONE);
 }
